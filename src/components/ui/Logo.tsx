@@ -37,3 +37,48 @@ export function Logo({ src, alt, size = 20, className = '' }: LogoProps) {
     />
   )
 }
+
+interface DualLogoProps {
+  tokenSrc: string | undefined
+  protocolSrc: string | undefined
+  tokenAlt: string
+  protocolAlt: string
+  size?: number
+  className?: string
+}
+
+export function DualLogo({
+  tokenSrc,
+  protocolSrc,
+  tokenAlt,
+  protocolAlt,
+  size = 20,
+  className = ''
+}: DualLogoProps) {
+  const offset = Math.round(size * 0.6)
+
+  return (
+    <div
+      className={`relative flex-shrink-0 ${className}`}
+      style={{ width: size + offset, height: size }}
+    >
+      {/* Token logo (background, right) */}
+      <div className="absolute" style={{ left: offset, top: 0 }}>
+        <Logo
+          src={tokenSrc}
+          alt={tokenAlt}
+          size={size}
+        />
+      </div>
+      {/* Protocol logo (foreground, left, on top) */}
+      <div className="absolute" style={{ left: 0, top: 0 }}>
+        <Logo
+          src={protocolSrc}
+          alt={protocolAlt}
+          size={size}
+          className="ring-2 ring-white"
+        />
+      </div>
+    </div>
+  )
+}

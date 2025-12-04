@@ -13,10 +13,10 @@ const UNDERLYING_LOGOS = {
 // Protocol logos
 export const PROTOCOL_LOGOS: Record<string, string> = {
   'Lido': 'https://assets.coingecko.com/coins/images/13573/small/Lido_DAO.png',
-  'Ether.fi': 'https://assets.coingecko.com/coins/images/33033/small/ether.fi.png',
+  'Ether.fi': 'https://coin-images.coingecko.com/coins/images/35958/small/etherfi.jpeg',
   'Pendle': 'https://assets.coingecko.com/coins/images/15069/small/Pendle_Logo_Normal-03.png',
   'Aave V3': 'https://assets.coingecko.com/coins/images/12645/small/AAVE.png',
-  'Morpho': 'https://assets.coingecko.com/coins/images/29837/small/morpho.png',
+  'Morpho': 'https://coin-images.coingecko.com/coins/images/29837/small/Morpho-token-icon.png',
   'Ethena': 'https://assets.coingecko.com/coins/images/33613/small/USDE.png',
   'Maple': 'https://assets.coingecko.com/coins/images/14097/small/photo_2021-05-03_14.20.41.jpeg',
 }

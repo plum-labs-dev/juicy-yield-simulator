@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
-import { Logo } from '@/components/ui/Logo'
+import { DualLogo, Logo } from '@/components/ui/Logo'
 import { LeverageConfigModal } from '@/components/modals/LeverageConfigModal'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { getCollateralParams } from '@/lib/constants'
@@ -114,7 +114,13 @@ export function EthAllocationWidget() {
                   className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
                 />
                 <div className="flex items-center gap-2 flex-1 min-w-0">
-                  <Logo src={getTokenLogo(product.name)} alt={product.name} size={20} />
+                  <DualLogo
+                    tokenSrc={getTokenLogo(product.name)}
+                    protocolSrc={getProtocolLogo(product.protocol)}
+                    tokenAlt={product.name}
+                    protocolAlt={product.protocol}
+                    size={24}
+                  />
                   <span className="font-medium text-gray-900 text-sm truncate">
                     {product.protocol} {product.name}
                   </span>
@@ -173,7 +179,13 @@ export function EthAllocationWidget() {
                     className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
                   />
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <Logo src={getTokenLogo(product.name)} alt={product.name} size={20} />
+                    <DualLogo
+                      tokenSrc={getTokenLogo(product.name)}
+                      protocolSrc={getProtocolLogo(product.protocol)}
+                      tokenAlt={product.name}
+                      protocolAlt={product.protocol}
+                      size={24}
+                    />
                     <span className="font-medium text-gray-900 text-sm truncate">
                       {product.protocol} {product.name}
                     </span>
