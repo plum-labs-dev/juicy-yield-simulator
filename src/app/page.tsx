@@ -3,6 +3,8 @@ import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
 import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAllocationWidget'
 import { ApyWidget } from '@/components/widgets/ApyWidget'
+import { HealthFactorWidget } from '@/components/widgets/HealthFactorWidget'
+import { LiquidationPriceWidget } from '@/components/widgets/LiquidationPriceWidget'
 
 export default function Home() {
   return (
@@ -26,42 +28,49 @@ export default function Home() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Widget Grid - responsive layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-          {/* Portfolio Setup - full width on mobile, 3 cols on desktop */}
+          {/* Row 1: Portfolio Setup + APY */}
           <div className="md:col-span-2 lg:col-span-3">
             <PortfolioSetupWidget />
           </div>
-
-          {/* APY Widget */}
           <div className="md:col-span-2 lg:col-span-1">
             <ApyWidget />
           </div>
 
-          {/* ETH Price */}
+          {/* Row 2: ETH Price + ETH Allocation + Total Return */}
           <div className="md:col-span-1 lg:col-span-1">
-            <EthPriceWidget />
+            <EthPriceWidget className="h-full" />
           </div>
-
-          {/* ETH Allocation */}
           <div className="md:col-span-1 lg:col-span-2">
             <EthAllocationWidget />
           </div>
-
-          {/* Total Return Widget placeholder */}
           <div className="md:col-span-2 lg:col-span-1">
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
               Total Return Widget
             </div>
           </div>
 
-          {/* Stablecoin Allocation - spans 2 columns on desktop */}
+          {/* Row 3: Health Factor/Liquidation stacked + Stablecoin Allocation + Annual Return placeholder */}
+          <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4 sm:gap-5">
+            <div className="flex-1">
+              <HealthFactorWidget />
+            </div>
+            <div className="flex-1">
+              <LiquidationPriceWidget />
+            </div>
+          </div>
           <div className="md:col-span-2 lg:col-span-2">
             <StablecoinAllocationWidget />
+          </div>
+          <div className="md:col-span-1 lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
+              Annual Return Widget
+            </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="fixed bottom-0 left-0 right-0 py-3 text-center text-xs text-gray-400 bg-[#FAFAFA]">
+      <footer className="py-6 text-center text-xs text-gray-400">
         For simulation purposes only. Not financial advice.
       </footer>
     </div>

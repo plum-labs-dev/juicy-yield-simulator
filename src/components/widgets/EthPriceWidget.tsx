@@ -5,7 +5,11 @@ import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { useState, useEffect, ChangeEvent } from 'react'
 
-export function EthPriceWidget() {
+interface EthPriceWidgetProps {
+  className?: string
+}
+
+export function EthPriceWidget({ className }: EthPriceWidgetProps) {
   const {
     ethPrice,
     priceChangeScenario,
@@ -83,7 +87,7 @@ export function EthPriceWidget() {
   }
 
   return (
-    <Card title="ETH Price">
+    <Card title="ETH Price" className={className}>
       <div className="space-y-4">
         {/* Price Input */}
         <div>
