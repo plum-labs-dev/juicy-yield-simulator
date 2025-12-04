@@ -3,7 +3,6 @@
 export interface PortfolioState {
   // Portfolio Setup
   investmentAmount: number
-  investmentPeriod: number // in years, supports decimals
   ethRatio: number // 0-100, stableRatio = 100 - ethRatio
 
   // ETH Price & Scenario

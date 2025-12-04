@@ -13,7 +13,6 @@ export function TotalReturnWidget() {
     ethAmount,
     stablecoinAmount,
     totalBorrowedAmount,
-    investmentPeriod,
   } = usePortfolioStore()
 
   // Calculate ETH APY (weighted average of selected products)

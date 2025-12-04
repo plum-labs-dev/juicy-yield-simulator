@@ -23,7 +23,6 @@ const initialStablecoinAllocations: StablecoinAllocation[] = STABLECOIN_PRODUCTS
 interface PortfolioStore {
   // Portfolio Setup
   investmentAmount: number
-  investmentPeriod: number
   ethRatio: number
 
   // ETH Price & Scenario
@@ -42,7 +41,6 @@ interface PortfolioStore {
 
   // Actions - Portfolio Setup
   setInvestmentAmount: (amount: number) => void
-  setInvestmentPeriod: (years: number) => void
   setEthRatio: (ratio: number) => void
 
   // Actions - ETH Price
@@ -65,7 +63,6 @@ interface PortfolioStore {
 export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
   // Initial state - Portfolio Setup
   investmentAmount: 1000000,
-  investmentPeriod: 1,
   ethRatio: 40,
 
   // Initial state - ETH Price
@@ -103,7 +100,6 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
 
   // Actions - Portfolio Setup
   setInvestmentAmount: (amount) => set({ investmentAmount: amount }),
-  setInvestmentPeriod: (years) => set({ investmentPeriod: years }),
   setEthRatio: (ratio) => set({ ethRatio: ratio }),
 
   // Actions - ETH Price
