@@ -67,20 +67,23 @@ export function ApyWidget() {
   // Final portfolio APY
   const portfolioApy = baseApy + leverageBoostPercent
 
-  // Check if allocations are valid (both sum to 100%)
+  // Calculate deployment percentage
   const ethTotal = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
   const stableTotal = stablecoinAllocations.reduce((sum, a) => sum + a.weight, 0)
-  const isValid = ethTotal === 100 && stableTotal === 100
+  const ethDeployed = (ethRatio / 100) * (ethTotal / 100)
+  const stableDeployed = ((100 - ethRatio) / 100) * (stableTotal / 100)
+  const deployedPercent = Math.round((ethDeployed + stableDeployed) * 100)
+  const isFullyDeployed = deployedPercent === 100
 
   return (
     <Card title="Portfolio APY" className="border-l-4 border-l-purple-900 h-full">
       <div className="space-y-4">
         {/* Main APY Display */}
         <div>
-          <span className={`text-4xl font-bold ${isValid ? 'text-purple-900' : 'text-gray-400'}`}>
-            {isValid ? portfolioApy.toFixed(2) : '—'}
+          <span className="text-4xl font-bold text-purple-900">
+            {portfolioApy.toFixed(2)}
           </span>
-          <span className={`text-2xl font-medium ${isValid ? 'text-purple-900' : 'text-gray-400'}`}>
+          <span className="text-2xl font-medium text-purple-900">
             %
           </span>
         </div>
@@ -89,22 +92,30 @@ export function ApyWidget() {
         <div className="space-y-2 pt-2 border-t border-gray-100">
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">ETH Yield</span>
-            <span className={`font-medium ${isValid ? 'text-gray-900' : 'text-gray-400'}`}>
-              {isValid ? `${ethApy.toFixed(2)}%` : '—'}
+            <span className="font-medium text-gray-900">
+              {ethApy.toFixed(2)}%
             </span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-gray-600">Stablecoin Yield</span>
-            <span className={`font-medium ${isValid ? 'text-gray-900' : 'text-gray-400'}`}>
-              {isValid ? `${stablecoinApy.toFixed(2)}%` : '—'}
+            <span className="font-medium text-gray-900">
+              {stablecoinApy.toFixed(2)}%
             </span>
           </div>
-          {isValid && leverageBoostPercent !== 0 && (
+          {leverageBoostPercent !== 0 && (
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Leverage Boost</span>
               <span className={`font-medium ${leverageBoostPercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                 {leverageBoostPercent >= 0 ? '+' : ''}{leverageBoostPercent.toFixed(2)}%
               </span>
+            </div>
+          )}
+          {!isFullyDeployed && (
+            <div className="flex items-center gap-1.5 text-xs text-amber-600 pt-1">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+              <span>{deployedPercent}% deployed</span>
             </div>
           )}
         </div>

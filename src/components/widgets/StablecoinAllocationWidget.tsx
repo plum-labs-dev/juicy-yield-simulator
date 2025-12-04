@@ -54,10 +54,10 @@ export function StablecoinAllocationWidget() {
     <Card
       title="Stablecoin Allocation"
       subtitle={`${formatAmount(baseAmount)} base${borrowedTotal > 0 ? ` + ${formatAmount(borrowedTotal)} leveraged` : ''} · Must total 100%`}
-      className="max-h-[500px] overflow-y-auto"
+      className="flex flex-col max-h-[500px]"
     >
       {/* Header Row - visible on lg screens */}
-      <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
+      <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500 flex-shrink-0">
         <div className="w-4" /> {/* Checkbox spacer */}
         <div className="flex-1">Protocol</div>
         <div className="w-12 text-center">APY</div>
@@ -65,7 +65,8 @@ export function StablecoinAllocationWidget() {
         <div className="w-24 text-right">Leveraged</div>
       </div>
 
-      <div className="space-y-2">
+      {/* Scrollable product list */}
+      <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
         {STABLECOIN_PRODUCTS.map((product) => {
           const allocation = stablecoinAllocations.find((a) => a.productId === product.id)
           const weight = allocation?.weight ?? 0
@@ -167,8 +168,8 @@ export function StablecoinAllocationWidget() {
         })}
       </div>
 
-      {/* Total Progress Bar */}
-      <div className="mt-4 pt-3 border-t border-gray-100">
+      {/* Total Progress Bar - Always visible */}
+      <div className="mt-4 pt-3 border-t border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between text-xs mb-1">
           <span className={isValid ? 'text-green-600 font-medium' : 'text-amber-600 font-medium'}>
             Total: {totalWeight}% · {formatAmount(baseAmount * (totalWeight / 100))}

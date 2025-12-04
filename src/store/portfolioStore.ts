@@ -119,7 +119,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
       toggleEthAllocation: (productId) =>
         set((state) => ({
           ethAllocations: state.ethAllocations.map((a) =>
-            a.productId === productId ? { ...a, selected: !a.selected, weight: !a.selected ? 0 : a.weight } : a
+            a.productId === productId ? { ...a, selected: !a.selected, weight: a.selected ? 0 : a.weight } : a
           ),
         })),
 
@@ -143,7 +143,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
       toggleStablecoinAllocation: (productId) =>
         set((state) => ({
           stablecoinAllocations: state.stablecoinAllocations.map((a) =>
-            a.productId === productId ? { ...a, selected: !a.selected, weight: !a.selected ? 0 : a.weight } : a
+            a.productId === productId ? { ...a, selected: !a.selected, weight: a.selected ? 0 : a.weight } : a
           ),
         })),
 

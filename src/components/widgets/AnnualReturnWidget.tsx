@@ -15,10 +15,13 @@ export function AnnualReturnWidget() {
     totalBorrowedAmount,
   } = usePortfolioStore()
 
-  // Check if allocations are valid
+  // Calculate deployment percentage
   const ethTotal = ethAllocations.reduce((sum, a) => sum + a.weight, 0)
   const stableTotal = stablecoinAllocations.reduce((sum, a) => sum + a.weight, 0)
-  const isValid = ethTotal === 100 && stableTotal === 100
+  const ethDeployed = (ethRatio / 100) * (ethTotal / 100)
+  const stableDeployed = ((100 - ethRatio) / 100) * (stableTotal / 100)
+  const deployedPercent = Math.round((ethDeployed + stableDeployed) * 100)
+  const isFullyDeployed = deployedPercent === 100
 
   // Calculate ETH product returns
   const ethProductReturns = ethAllocations
@@ -109,19 +112,6 @@ export function AnnualReturnWidget() {
     return `$${Math.round(amount)}`
   }
 
-  if (!isValid) {
-    return (
-      <Card title="Annual Return" className="h-full">
-        <div>
-          <span className="text-4xl font-bold text-gray-300">—</span>
-          <p className="text-xs text-amber-600 mt-2">
-            Complete allocations to see return
-          </p>
-        </div>
-      </Card>
-    )
-  }
-
   return (
     <Card title="Annual Return" className="h-full">
       <div className="space-y-4">
@@ -133,6 +123,14 @@ export function AnnualReturnWidget() {
           <p className="text-sm text-gray-500 mt-1">
             Daily {formatCompact(dailyReturn)} · Monthly {formatCompact(monthlyReturn)}
           </p>
+          {!isFullyDeployed && (
+            <div className="flex items-center gap-1.5 text-xs text-amber-600 mt-2">
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495zM10 5a.75.75 0 01.75.75v3.5a.75.75 0 01-1.5 0v-3.5A.75.75 0 0110 5zm0 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+              <span>{deployedPercent}% deployed</span>
+            </div>
+          )}
         </div>
 
         {/* Breakdown Table */}
