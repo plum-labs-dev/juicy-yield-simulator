@@ -1,7 +1,7 @@
 import { ReactNode } from 'react'
 
 interface CardProps {
-  title?: string
+  title?: ReactNode
   subtitle?: string
   children: ReactNode
   className?: string
