@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import { ETH_PRODUCTS, STABLECOIN_PRODUCTS, getBorrowRate } from '@/lib/constants'
+import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
 
 export function ExpectedBalanceWidget() {
   const {
@@ -15,6 +15,25 @@ export function ExpectedBalanceWidget() {
     totalBorrowedAmount,
   } = usePortfolioStore()
 
+  // Get live APY data
+  const { ethProducts, stablecoinProducts } = useLiveProducts()
+
+  // Get live borrow rates
+  const usdcBorrowRate = useLiveBorrowRate('USDC')
+  const usdtBorrowRate = useLiveBorrowRate('USDT')
+  const usdsBorrowRate = useLiveBorrowRate('USDS')
+
+  const getLiveBorrowRate = (asset: 'USDC' | 'USDT' | 'USDS'): number => {
+    switch (asset) {
+      case 'USDC':
+        return usdcBorrowRate
+      case 'USDT':
+        return usdtBorrowRate
+      case 'USDS':
+        return usdsBorrowRate
+    }
+  }
+
   const currentEthAmount = ethAmount()
   const currentStableAmount = stablecoinAmount()
   const priceMultiplier = 1 + priceChangeScenario / 100
@@ -26,7 +45,7 @@ export function ExpectedBalanceWidget() {
   // Calculate ETH yield in ETH terms
   const ethYieldEth = ethAllocations.reduce((sum, allocation) => {
     if (allocation.weight > 0) {
-      const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
+      const product = ethProducts.find((p) => p.id === allocation.productId)
       if (product) {
         const amountEth = ethPrice > 0 ? (currentEthAmount * (allocation.weight / 100)) / ethPrice : 0
         return sum + amountEth * (product.apy / 100)
@@ -43,7 +62,7 @@ export function ExpectedBalanceWidget() {
   // Calculate stablecoin yield
   const stablecoinYieldUsd = stablecoinAllocations.reduce((sum, allocation) => {
     if (allocation.weight > 0) {
-      const product = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.productId)
+      const product = stablecoinProducts.find((p) => p.id === allocation.productId)
       if (product) {
         const amount = currentStableAmount * (allocation.weight / 100)
         return sum + amount * (product.apy / 100)
@@ -59,9 +78,9 @@ export function ExpectedBalanceWidget() {
       const collateralValue = positionValue * (allocation.leverage.collateralPercent / 100)
       const borrowed = collateralValue * (allocation.leverage.ltv / 100)
 
-      const deployTarget = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.leverage!.deployTargetId)
+      const deployTarget = stablecoinProducts.find((p) => p.id === allocation.leverage!.deployTargetId)
       const deployApy = deployTarget?.apy ?? 0
-      const borrowRate = getBorrowRate(allocation.leverage.borrowAsset)
+      const borrowRate = getLiveBorrowRate(allocation.leverage.borrowAsset)
 
       const netYield = borrowed * ((deployApy - borrowRate) / 100)
       return sum + netYield

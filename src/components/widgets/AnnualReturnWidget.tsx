@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import { ETH_PRODUCTS, STABLECOIN_PRODUCTS, getBorrowRate } from '@/lib/constants'
+import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
 
 export function AnnualReturnWidget() {
   const {
@@ -15,6 +15,25 @@ export function AnnualReturnWidget() {
     stablecoinAmount,
     totalBorrowedAmount,
   } = usePortfolioStore()
+
+  // Get live APY data
+  const { ethProducts, stablecoinProducts } = useLiveProducts()
+
+  // Get live borrow rates
+  const usdcBorrowRate = useLiveBorrowRate('USDC')
+  const usdtBorrowRate = useLiveBorrowRate('USDT')
+  const usdsBorrowRate = useLiveBorrowRate('USDS')
+
+  const getLiveBorrowRate = (asset: 'USDC' | 'USDT' | 'USDS'): number => {
+    switch (asset) {
+      case 'USDC':
+        return usdcBorrowRate
+      case 'USDT':
+        return usdtBorrowRate
+      case 'USDS':
+        return usdsBorrowRate
+    }
+  }
 
   const currentEthAmount = ethAmount()
   const currentStableAmount = stablecoinAmount()
@@ -36,7 +55,7 @@ export function AnnualReturnWidget() {
   const ethProductReturns = ethAllocations
     .filter((a) => a.weight > 0)
     .map((allocation) => {
-      const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
+      const product = ethProducts.find((p) => p.id === allocation.productId)
       if (!product) return null
       const amountUsd = currentEthAmount * (allocation.weight / 100)
       const amountEth = ethPrice > 0 ? amountUsd / ethPrice : 0
@@ -57,7 +76,7 @@ export function AnnualReturnWidget() {
   const stablecoinProductReturns = stablecoinAllocations
     .filter((a) => a.weight > 0)
     .map((allocation) => {
-      const product = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.productId)
+      const product = stablecoinProducts.find((p) => p.id === allocation.productId)
       if (!product) return null
       const amount = currentStableAmount * (allocation.weight / 100)
       const yieldUsd = amount * (product.apy / 100)
@@ -75,25 +94,28 @@ export function AnnualReturnWidget() {
   const leverageDetails = ethAllocations
     .filter((a) => a.leverage?.enabled)
     .map((allocation) => {
-      const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
+      const product = ethProducts.find((p) => p.id === allocation.productId)
       if (!product || !allocation.leverage) return null
 
       const positionValue = currentEthAmount * (allocation.weight / 100)
       const collateralValue = positionValue * (allocation.leverage.collateralPercent / 100)
       const borrowed = collateralValue * (allocation.leverage.ltv / 100)
-      const borrowRate = getBorrowRate(allocation.leverage.borrowAsset)
+      const borrowRate = getLiveBorrowRate(allocation.leverage.borrowAsset)
       const annualCost = borrowed * (borrowRate / 100)
 
       // Leverage yield (USD)
-      const deployTarget = STABLECOIN_PRODUCTS.find((p) => p.id === allocation.leverage!.deployTargetId)
+      const deployTarget = stablecoinProducts.find((p) => p.id === allocation.leverage!.deployTargetId)
       const deployApy = deployTarget?.apy ?? 0
+      const deployName = deployTarget ? `${deployTarget.protocol} ${deployTarget.name}` : 'Unknown'
       const grossYield = borrowed * (deployApy / 100)
       const netYield = grossYield - annualCost
 
       return {
         productName: product.name,
         borrowed,
+        borrowAsset: allocation.leverage.borrowAsset,
         borrowRate,
+        deployName,
         deployApy,
         grossYield,
         annualCost,
@@ -274,16 +296,17 @@ export function AnnualReturnWidget() {
           {totalBorrowed > 0 && (
             <div>
               <p className="text-xs font-medium text-purple-600 mb-1">Leverage</p>
-              {leverageDetails.map((d) => (
-                <div key={d?.productName} className="space-y-0.5">
+              {leverageDetails.map((d, index) => (
+                <div key={d?.productName} className={`space-y-0.5 ${index > 0 ? 'mt-2 pt-2 border-t border-gray-50' : ''}`}>
+                  <p className="text-xs text-gray-500 mb-0.5">{d?.productName}</p>
                   <div className="flex justify-between py-0.5">
-                    <span className="text-gray-600">Yield ({d?.deployApy}%)</span>
+                    <span className="text-gray-600">{d?.deployName} ({d?.deployApy.toFixed(2)}%)</span>
                     <span className="text-green-600 tabular-nums font-medium">
                       +{formatCompact(d?.grossYield ?? 0)}
                     </span>
                   </div>
                   <div className="flex justify-between py-0.5">
-                    <span className="text-gray-600">Borrow cost ({d?.borrowRate}%)</span>
+                    <span className="text-gray-600">{d?.borrowAsset} borrow ({d?.borrowRate.toFixed(2)}%)</span>
                     <span className="text-red-600 tabular-nums font-medium">
                       -{formatCompact(d?.annualCost ?? 0)}
                     </span>

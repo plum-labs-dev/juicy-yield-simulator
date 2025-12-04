@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Card } from '@/components/ui/Card'
 import { LeverageConfigModal } from '@/components/modals/LeverageConfigModal'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import { ETH_PRODUCTS, getCollateralParams } from '@/lib/constants'
+import { getCollateralParams } from '@/lib/constants'
+import { useLiveProducts } from '@/hooks/useLiveApys'
 import type { LeverageConfig } from '@/types'
 
 export function EthAllocationWidget() {
@@ -16,6 +17,9 @@ export function EthAllocationWidget() {
     ethAmount,
     ethPrice,
   } = usePortfolioStore()
+
+  // Get live APY data
+  const { ethProducts } = useLiveProducts()
 
   // Modal state
   const [leverageModalOpen, setLeverageModalOpen] = useState(false)
@@ -83,7 +87,7 @@ export function EthAllocationWidget() {
       </div>
 
       <div className="space-y-2">
-        {ETH_PRODUCTS.map((product) => {
+        {ethProducts.map((product) => {
           const allocation = ethAllocations.find((a) => a.productId === product.id)
           const weight = allocation?.weight ?? 0
           const isSelected = allocation?.selected ?? false
@@ -111,7 +115,7 @@ export function EthAllocationWidget() {
                   {product.protocol} {product.name}
                 </span>
                 <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
-                  {product.apy}%
+                  {product.apy.toFixed(2)}%
                 </span>
                 <div className="flex items-center gap-1 w-20 justify-center">
                   <input
@@ -167,7 +171,7 @@ export function EthAllocationWidget() {
                     {product.protocol} {product.name}
                   </span>
                   <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
-                    {product.apy}%
+                    {product.apy.toFixed(2)}%
                   </span>
                 </div>
 

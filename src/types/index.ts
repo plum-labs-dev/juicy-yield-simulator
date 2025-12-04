@@ -22,9 +22,18 @@ export interface EthProduct {
   id: string
   protocol: string
   name: string
-  apy: number
+  apy: number // fallback/default APY
   isCollateralEligible: boolean
   yieldType: YieldType
+  poolId?: string // DeFiLlama pool UUID for direct lookup
+  poolFilter?: PoolFilter // Alternative: filter criteria for finding pool
+}
+
+// Pool filter for finding pools in DeFiLlama API
+export interface PoolFilter {
+  project: string
+  symbol: string
+  chain?: string // defaults to 'Ethereum'
 }
 
 export interface EthAllocation {
@@ -50,10 +59,12 @@ export interface StablecoinProduct {
   id: string
   protocol: string
   name: string
-  apy: number
+  apy: number // fallback/default APY
   apyRange?: [number, number] // for variable APY products
   risk: RiskLevel
   yieldType: YieldType
+  poolId?: string // DeFiLlama pool UUID for direct lookup
+  poolFilter?: PoolFilter // Alternative: filter criteria for finding pool
 }
 
 export interface StablecoinAllocation {
@@ -77,4 +88,56 @@ export interface BorrowOption {
 export interface CollateralParams {
   maxLtv: number
   liquidationThreshold: number
+}
+
+// DeFiLlama API Response Types
+export interface DefiLlamaPool {
+  pool: string // UUID
+  chain: string
+  project: string
+  symbol: string
+  tvlUsd: number
+  apy: number
+  apyBase?: number
+  apyReward?: number
+  rewardTokens?: string[]
+  apyPct1D?: number
+  apyPct7D?: number
+  apyPct30D?: number
+  stablecoin: boolean
+  ilRisk: string
+  exposure: string
+  poolMeta?: string
+}
+
+export interface DefiLlamaBorrowPool extends DefiLlamaPool {
+  apyBaseBorrow?: number
+  apyRewardBorrow?: number
+  totalSupplyUsd?: number
+  totalBorrowUsd?: number
+  ltv?: number
+}
+
+export interface DefiLlamaPoolsResponse {
+  status: string
+  data: DefiLlamaPool[]
+}
+
+export interface DefiLlamaBorrowResponse {
+  status: string
+  data: DefiLlamaBorrowPool[]
+}
+
+// Cached APY data structure
+export interface CachedApyData {
+  timestamp: number // Unix timestamp when cached
+  poolApys: Record<string, number> // poolId or productId -> APY
+  borrowRates: Record<string, number> // asset (USDC, USDT, USDS) -> borrow rate
+}
+
+// API route response
+export interface YieldsApiResponse {
+  success: boolean
+  data?: CachedApyData
+  error?: string
 }

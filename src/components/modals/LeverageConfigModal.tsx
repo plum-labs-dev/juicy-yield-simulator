@@ -3,13 +3,8 @@
 import { useState, useEffect } from 'react'
 import { Modal } from '@/components/ui/Modal'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import {
-  ETH_PRODUCTS,
-  STABLECOIN_PRODUCTS,
-  BORROW_OPTIONS,
-  getCollateralParams,
-  getBorrowRate,
-} from '@/lib/constants'
+import { BORROW_OPTIONS, getCollateralParams } from '@/lib/constants'
+import { useLiveProducts, useLiveBorrowRate } from '@/hooks/useLiveApys'
 import type { LeverageConfig } from '@/types'
 
 interface LeverageConfigModalProps {
@@ -31,9 +26,26 @@ export function LeverageConfigModal({
   onApply,
   onRemove,
 }: LeverageConfigModalProps) {
-  const product = ETH_PRODUCTS.find((p) => p.id === productId)
+  const { ethProducts, stablecoinProducts } = useLiveProducts()
+  const product = ethProducts.find((p) => p.id === productId)
   const collateralParams = getCollateralParams(productId)
   const { ethPrice } = usePortfolioStore()
+
+  // Get live borrow rates
+  const usdcBorrowRate = useLiveBorrowRate('USDC')
+  const usdtBorrowRate = useLiveBorrowRate('USDT')
+  const usdsBorrowRate = useLiveBorrowRate('USDS')
+
+  const getLiveBorrowRate = (asset: 'USDC' | 'USDT' | 'USDS'): number => {
+    switch (asset) {
+      case 'USDC':
+        return usdcBorrowRate
+      case 'USDT':
+        return usdtBorrowRate
+      case 'USDS':
+        return usdsBorrowRate
+    }
+  }
 
   // Local state for form
   const [collateralPercent, setCollateralPercent] = useState(50)
@@ -60,8 +72,8 @@ export function LeverageConfigModal({
   // Calculations
   const collateralValue = positionValue * (collateralPercent / 100)
   const borrowedAmount = collateralValue * (ltv / 100)
-  const borrowRate = getBorrowRate(borrowAsset)
-  const deployTarget = STABLECOIN_PRODUCTS.find((p) => p.id === deployTargetId)
+  const borrowRate = getLiveBorrowRate(borrowAsset)
+  const deployTarget = stablecoinProducts.find((p) => p.id === deployTargetId)
   const deployApy = deployTarget?.apy ?? 0
 
   // Health Factor = (Collateral × Liquidation Threshold) / Borrowed
@@ -274,7 +286,7 @@ export function LeverageConfigModal({
             ))}
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            Est. Borrow Rate: <span className="font-medium text-gray-700">~{borrowRate}% APY</span>
+            Est. Borrow Rate: <span className="font-medium text-gray-700">~{borrowRate.toFixed(2)}% APY</span>
           </p>
         </div>
 
@@ -291,9 +303,9 @@ export function LeverageConfigModal({
             onChange={(e) => setDeployTargetId(e.target.value)}
             className="w-full px-3 py-2.5 text-sm text-gray-900 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white"
           >
-            {STABLECOIN_PRODUCTS.map((product) => (
+            {stablecoinProducts.map((product) => (
               <option key={product.id} value={product.id}>
-                {product.protocol} {product.name} ({product.apy}% APY)
+                {product.protocol} {product.name} ({product.apy.toFixed(2)}% APY)
               </option>
             ))}
           </select>
@@ -310,11 +322,11 @@ export function LeverageConfigModal({
             </div>
             <div className="flex justify-between">
               <span className="text-gray-700">Deploy APY:</span>
-              <span className="font-mono font-medium text-gray-900">{deployApy.toFixed(1)}%</span>
+              <span className="font-mono font-medium text-gray-900">{deployApy.toFixed(2)}%</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-700">Borrow Cost:</span>
-              <span className="font-mono font-medium text-gray-900">{borrowRate}%</span>
+              <span className="font-mono font-medium text-gray-900">{borrowRate.toFixed(2)}%</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-700">Net Boost:</span>

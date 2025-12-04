@@ -2,10 +2,12 @@
 
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import { ETH_PRODUCTS, getCollateralParams } from '@/lib/constants'
+import { getCollateralParams } from '@/lib/constants'
+import { useLiveProducts } from '@/hooks/useLiveApys'
 
 export function LiquidationPriceWidget() {
   const { ethAllocations, ethAmount, ethPrice } = usePortfolioStore()
+  const { ethProducts } = useLiveProducts()
 
   // Calculate aggregate liquidation price
   // Liquidation occurs when Health Factor = 1
@@ -17,7 +19,7 @@ export function LiquidationPriceWidget() {
   const leverageStats = ethAllocations.reduce(
     (acc, allocation) => {
       if (allocation.leverage?.enabled) {
-        const product = ETH_PRODUCTS.find((p) => p.id === allocation.productId)
+        const product = ethProducts.find((p) => p.id === allocation.productId)
         const collateralParams = getCollateralParams(allocation.productId)
 
         if (product && collateralParams) {

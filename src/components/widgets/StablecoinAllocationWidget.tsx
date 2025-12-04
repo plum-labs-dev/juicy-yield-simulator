@@ -2,7 +2,7 @@
 
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
-import { STABLECOIN_PRODUCTS } from '@/lib/constants'
+import { useLiveProducts } from '@/hooks/useLiveApys'
 
 export function StablecoinAllocationWidget() {
   const {
@@ -14,6 +14,9 @@ export function StablecoinAllocationWidget() {
     ethAllocations,
     ethAmount,
   } = usePortfolioStore()
+
+  // Get live APY data
+  const { stablecoinProducts } = useLiveProducts()
 
   const totalWeight = stablecoinAllocations.reduce((sum, a) => sum + a.weight, 0)
   const isValid = totalWeight === 100
@@ -68,7 +71,7 @@ export function StablecoinAllocationWidget() {
 
       {/* Scrollable product list */}
       <div className="space-y-2 overflow-y-auto flex-1 min-h-0">
-        {STABLECOIN_PRODUCTS.map((product) => {
+        {stablecoinProducts.map((product) => {
           const allocation = stablecoinAllocations.find((a) => a.productId === product.id)
           const weight = allocation?.weight ?? 0
           const isSelected = allocation?.selected ?? false
@@ -95,9 +98,7 @@ export function StablecoinAllocationWidget() {
                   {product.protocol} {product.name}
                 </span>
                 <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
-                  {product.apyRange
-                    ? `${product.apyRange[0]}-${product.apyRange[1]}%`
-                    : `${product.apy}%`}
+                  {product.apy.toFixed(2)}%
                 </span>
                 <div className="flex items-center gap-1 w-20 justify-center">
                   <input
@@ -135,9 +136,7 @@ export function StablecoinAllocationWidget() {
                     {product.protocol} {product.name}
                   </span>
                   <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
-                    {product.apyRange
-                      ? `${product.apyRange[0]}-${product.apyRange[1]}%`
-                      : `${product.apy}%`}
+                    {product.apy.toFixed(2)}%
                   </span>
                 </div>
 
