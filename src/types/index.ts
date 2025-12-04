@@ -26,6 +26,7 @@ export interface EthProduct {
 
 export interface EthAllocation {
   productId: string
+  selected: boolean
   weight: number // 0-100
   leverage?: LeverageConfig
 }

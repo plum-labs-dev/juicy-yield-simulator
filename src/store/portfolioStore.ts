@@ -37,6 +37,7 @@ interface PortfolioStore {
 
   // Actions - ETH Allocations
   setEthAllocations: (allocations: EthAllocation[]) => void
+  toggleEthAllocation: (productId: string) => void
   updateEthAllocationWeight: (productId: string, weight: number) => void
   setLeverageConfig: (productId: string, config: LeverageConfig | undefined) => void
 
@@ -96,6 +97,13 @@ export const usePortfolioStore = create<PortfolioStore>((set, get) => ({
 
   // Actions - ETH Allocations
   setEthAllocations: (allocations) => set({ ethAllocations: allocations }),
+
+  toggleEthAllocation: (productId) =>
+    set((state) => ({
+      ethAllocations: state.ethAllocations.map((a) =>
+        a.productId === productId ? { ...a, selected: !a.selected, weight: !a.selected ? 0 : a.weight } : a
+      ),
+    })),
 
   updateEthAllocationWeight: (productId, weight) =>
     set((state) => ({

@@ -1,5 +1,6 @@
 import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
 import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
+import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
 
 export default function Home() {
   return (
@@ -42,11 +43,9 @@ export default function Home() {
             <EthPriceWidget />
           </div>
 
-          {/* Placeholder for ETH Allocation - 2 columns */}
+          {/* ETH Allocation - 2 columns */}
           <div className="col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
-              ETH Allocation Widget
-            </div>
+            <EthAllocationWidget />
           </div>
 
           {/* Placeholder for Total Return - 1 column */}
