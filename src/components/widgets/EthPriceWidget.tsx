@@ -86,7 +86,7 @@ export function EthPriceWidget() {
     <Card title="ETH Price">
       <div className="space-y-4">
         {/* Price Input */}
-        <div className="flex items-center justify-between">
+        <div>
           <div className="flex items-center gap-2">
             <span className="text-2xl font-semibold text-gray-900">$</span>
             <input
@@ -94,11 +94,11 @@ export function EthPriceWidget() {
               value={localPrice}
               onChange={handlePriceChange}
               onBlur={handlePriceBlur}
-              className="text-2xl font-semibold text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-purple-900 outline-none w-24 transition-colors"
+              className="text-2xl font-semibold text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-purple-900 outline-none w-full max-w-[120px] transition-colors"
             />
           </div>
           <button
-            className="text-xs text-purple-900 hover:text-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-xs text-purple-900 hover:text-purple-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed mt-2"
             onClick={handleFetchLivePrice}
             disabled={isLoading}
           >

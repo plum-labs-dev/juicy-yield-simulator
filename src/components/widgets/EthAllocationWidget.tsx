@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Card } from '@/components/ui/Card'
+import { LeverageConfigModal } from '@/components/modals/LeverageConfigModal'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { ETH_PRODUCTS, getCollateralParams } from '@/lib/constants'
-import type { EthAllocation } from '@/types'
+import type { EthAllocation, LeverageConfig } from '@/types'
 
 export function EthAllocationWidget() {
   const {
@@ -12,8 +13,13 @@ export function EthAllocationWidget() {
     setEthAllocations,
     toggleEthAllocation,
     updateEthAllocationWeight,
+    setLeverageConfig,
     ethAmount,
   } = usePortfolioStore()
+
+  // Modal state
+  const [leverageModalOpen, setLeverageModalOpen] = useState(false)
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
 
   // Initialize allocations if empty
   useEffect(() => {
@@ -62,13 +68,13 @@ export function EthAllocationWidget() {
       title="ETH Allocation"
       subtitle={`${formatAmount(ethAmount())} · Must total 100%`}
     >
-      {/* Header Row */}
-      <div className="flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
+      {/* Header Row - visible on lg screens */}
+      <div className="hidden lg:flex items-center gap-3 px-3 py-2 text-xs text-gray-500">
         <div className="w-4" /> {/* Checkbox spacer */}
         <div className="flex-1">Protocol</div>
         <div className="w-12 text-center">APY</div>
-        <div className="w-16 text-center">Allocation</div>
-        <div className="w-24 text-center">Leverage</div>
+        <div className="w-20 text-center">Allocation</div>
+        <div className="w-28 text-center">Leverage</div>
       </div>
 
       <div className="space-y-2">
@@ -82,73 +88,125 @@ export function EthAllocationWidget() {
           return (
             <div
               key={product.id}
-              className={`flex items-center gap-3 p-3 rounded-lg border transition-colors ${
+              className={`p-3 rounded-lg border transition-colors ${
                 isSelected
                   ? 'border-purple-200 bg-purple-50/50'
                   : 'border-gray-100 hover:border-gray-200'
               }`}
             >
-              {/* Checkbox */}
-              <input
-                type="checkbox"
-                checked={isSelected}
-                onChange={() => toggleEthAllocation(product.id)}
-                className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
-              />
-
-              {/* Product Info */}
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-900 text-sm">
-                    {product.protocol} {product.name}
-                  </span>
+              {/* Desktop: Single row layout */}
+              <div className="hidden lg:flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => toggleEthAllocation(product.id)}
+                  className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
+                />
+                <span className="font-medium text-gray-900 text-sm flex-1 min-w-0 truncate">
+                  {product.protocol} {product.name}
+                </span>
+                <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
+                  {product.apy}%
+                </span>
+                <div className="flex items-center gap-1 w-20 justify-center">
+                  <input
+                    type="number"
+                    value={weight || ''}
+                    onChange={(e) => handleWeightChange(product.id, e.target.value)}
+                    placeholder="—"
+                    disabled={!isSelected}
+                    className="w-12 px-2 py-1 text-sm text-center font-medium text-gray-900 bg-white border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  />
+                  <span className="text-xs text-gray-400">%</span>
+                </div>
+                <div className="w-28 flex justify-center">
+                  {product.isCollateralEligible && collateralParams ? (
+                    <button
+                      disabled={!isSelected}
+                      className={`text-xs px-2 py-1 rounded border transition-colors ${
+                        leverage?.enabled
+                          ? 'bg-purple-100 border-purple-300 text-purple-800'
+                          : 'border-gray-200 text-gray-500 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                      }`}
+                      onClick={() => {
+                        setSelectedProductId(product.id)
+                        setLeverageModalOpen(true)
+                      }}
+                    >
+                      {leverage?.enabled
+                        ? `${leverage.ltv}% LTV · ${formatAmount(
+                            ethAmount() *
+                              (weight / 100) *
+                              (leverage.collateralPercent / 100) *
+                              (leverage.ltv / 100)
+                          )}`
+                        : 'Leverage'}
+                    </button>
+                  ) : (
+                    <span className="text-xs text-gray-300">—</span>
+                  )}
                 </div>
               </div>
 
-              {/* APY Badge */}
-              <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded">
-                {product.apy}%
-              </span>
+              {/* Mobile/Tablet: Two row layout */}
+              <div className="lg:hidden">
+                {/* Row 1: Checkbox + Protocol + APY */}
+                <div className="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => toggleEthAllocation(product.id)}
+                    className="w-4 h-4 text-purple-900 border-gray-300 rounded focus:ring-purple-500 cursor-pointer flex-shrink-0"
+                  />
+                  <span className="font-medium text-gray-900 text-sm flex-1 min-w-0 truncate">
+                    {product.protocol} {product.name}
+                  </span>
+                  <span className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded flex-shrink-0">
+                    {product.apy}%
+                  </span>
+                </div>
 
-              {/* Weight Input */}
-              <div className="flex items-center gap-1">
-                <input
-                  type="number"
-                  value={weight || ''}
-                  onChange={(e) => handleWeightChange(product.id, e.target.value)}
-                  placeholder="—"
-                  disabled={!isSelected}
-                  className="w-12 px-2 py-1 text-sm text-center font-medium text-gray-900 bg-white border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                />
-                <span className="text-xs text-gray-400">%</span>
+                {/* Row 2: Allocation + Leverage (only when selected) */}
+                {isSelected && (
+                  <div className="flex items-center gap-3 mt-2 ml-7">
+                    <div className="flex items-center gap-1">
+                      <input
+                        type="number"
+                        value={weight || ''}
+                        onChange={(e) => handleWeightChange(product.id, e.target.value)}
+                        placeholder="—"
+                        disabled={!isSelected}
+                        className="w-14 px-2 py-1 text-sm text-center font-medium text-gray-900 bg-white border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-purple-500 disabled:bg-gray-50 disabled:text-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      />
+                      <span className="text-xs text-gray-400">%</span>
+                    </div>
+
+                    {product.isCollateralEligible && collateralParams && (
+                      <button
+                        disabled={!isSelected}
+                        className={`text-xs px-2 py-1 rounded border transition-colors flex-shrink-0 ${
+                          leverage?.enabled
+                            ? 'bg-purple-100 border-purple-300 text-purple-800'
+                            : 'border-gray-200 text-gray-500 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed'
+                        }`}
+                        onClick={() => {
+                          setSelectedProductId(product.id)
+                          setLeverageModalOpen(true)
+                        }}
+                      >
+                        {leverage?.enabled
+                          ? `${leverage.ltv}% LTV · ${formatAmount(
+                              ethAmount() *
+                                (weight / 100) *
+                                (leverage.collateralPercent / 100) *
+                                (leverage.ltv / 100)
+                            )}`
+                          : 'Leverage'}
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-
-              {/* Leverage Button */}
-              {product.isCollateralEligible && collateralParams ? (
-                <button
-                  disabled={!isSelected}
-                  className={`text-xs px-2 py-1 rounded border transition-colors ${
-                    leverage?.enabled
-                      ? 'bg-purple-100 border-purple-300 text-purple-800'
-                      : 'border-gray-200 text-gray-500 hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed'
-                  }`}
-                  onClick={() => {
-                    // TODO: Open leverage modal
-                    console.log('Open leverage modal for', product.id)
-                  }}
-                >
-                  {leverage?.enabled
-                    ? `${leverage.ltv}% LTV · ${formatAmount(
-                        ethAmount() *
-                          (weight / 100) *
-                          (leverage.collateralPercent / 100) *
-                          (leverage.ltv / 100)
-                      )}`
-                    : 'Leverage'}
-                </button>
-              ) : (
-                <span className="text-xs text-gray-300 w-16" />
-              )}
             </div>
           )
         })}
@@ -175,6 +233,29 @@ export function EthAllocationWidget() {
           />
         </div>
       </div>
+
+      {/* Leverage Configuration Modal */}
+      {selectedProductId && (
+        <LeverageConfigModal
+          isOpen={leverageModalOpen}
+          onClose={() => {
+            setLeverageModalOpen(false)
+            setSelectedProductId(null)
+          }}
+          productId={selectedProductId}
+          positionValue={
+            ethAmount() *
+            ((ethAllocations.find((a) => a.productId === selectedProductId)?.weight ?? 0) / 100)
+          }
+          currentConfig={ethAllocations.find((a) => a.productId === selectedProductId)?.leverage}
+          onApply={(config: LeverageConfig) => {
+            setLeverageConfig(selectedProductId, config)
+          }}
+          onRemove={() => {
+            setLeverageConfig(selectedProductId, undefined)
+          }}
+        />
+      )}
     </Card>
   )
 }

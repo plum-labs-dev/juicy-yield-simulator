@@ -21,36 +21,34 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Widget Grid - will expand as we add more widgets */}
-        <div className="grid grid-cols-4 gap-5">
-          {/* Row 1 */}
-          {/* Portfolio Setup - spans 3 columns */}
-          <div className="col-span-3">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        {/* Widget Grid - responsive layout */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+          {/* Portfolio Setup - full width on mobile, 3 cols on desktop */}
+          <div className="md:col-span-2 lg:col-span-3">
             <PortfolioSetupWidget />
           </div>
 
-          {/* Placeholder for APY widget */}
-          <div className="col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
+          {/* APY Widget placeholder */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
               APY Widget
             </div>
           </div>
 
-          {/* Row 2 */}
-          {/* ETH Price - 1 column */}
-          <div className="col-span-1">
+          {/* ETH Price */}
+          <div className="md:col-span-1 lg:col-span-1">
             <EthPriceWidget />
           </div>
 
-          {/* ETH Allocation - 2 columns */}
-          <div className="col-span-2">
+          {/* ETH Allocation */}
+          <div className="md:col-span-1 lg:col-span-2">
             <EthAllocationWidget />
           </div>
 
-          {/* Placeholder for Total Return - 1 column */}
-          <div className="col-span-1">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm">
+          {/* Total Return Widget placeholder */}
+          <div className="md:col-span-2 lg:col-span-1">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 h-full flex items-center justify-center text-gray-400 text-sm min-h-[120px]">
               Total Return Widget
             </div>
           </div>
