@@ -1,3 +1,4 @@
+import { Header } from '@/components/Header'
 import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
 import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
 import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
@@ -11,20 +12,7 @@ import { AnnualReturnWidget } from '@/components/widgets/AnnualReturnWidget'
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold text-[#48104a]">Juicy Yield</h1>
-            <span className="text-sm text-gray-500">
-              Institutional DeFi Portfolio Simulator
-            </span>
-          </div>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-            Export Summary
-          </button>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">

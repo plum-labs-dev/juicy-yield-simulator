@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { Card } from '@/components/ui/Card'
 import { usePortfolioStore } from '@/store/portfolioStore'
 import { useState, useEffect, ChangeEvent } from 'react'
@@ -18,12 +17,17 @@ export function EthPriceWidget({ className }: EthPriceWidgetProps) {
   } = usePortfolioStore()
 
   const [localPrice, setLocalPrice] = useState<string>(ethPrice.toLocaleString())
+  const [localScenario, setLocalScenario] = useState<string>(priceChangeScenario.toString())
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     setLocalPrice(ethPrice.toLocaleString())
   }, [ethPrice])
+
+  useEffect(() => {
+    setLocalScenario(priceChangeScenario.toString())
+  }, [priceChangeScenario])
 
   const handlePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, '')
@@ -76,11 +80,24 @@ export function EthPriceWidget({ className }: EthPriceWidgetProps) {
   }
 
   const handleScenarioChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPriceChangeScenario(parseFloat(e.target.value))
+    setLocalScenario(e.target.value)
+    const numValue = parseFloat(e.target.value)
+    if (!isNaN(numValue)) {
+      setPriceChangeScenario(numValue)
+    }
+  }
+
+  const handleScenarioBlur = () => {
+    const numValue = parseFloat(localScenario)
+    if (isNaN(numValue)) {
+      setLocalScenario(priceChangeScenario.toString())
+    } else {
+      setLocalScenario(numValue.toString())
+      setPriceChangeScenario(numValue)
+    }
   }
 
   const projectedPrice = ethPrice * (1 + priceChangeScenario / 100)
-  const percentage = ((priceChangeScenario - (-100)) / (1000 - (-100))) * 100
 
   const formatPrice = (price: number): string => {
     return `$${price.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
@@ -98,7 +115,7 @@ export function EthPriceWidget({ className }: EthPriceWidgetProps) {
               value={localPrice}
               onChange={handlePriceChange}
               onBlur={handlePriceBlur}
-              className="text-2xl font-semibold text-gray-900 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-purple-900 outline-none w-full max-w-[120px] transition-colors"
+              className="text-2xl font-semibold text-gray-900 bg-transparent border-b border-gray-300 hover:border-gray-400 focus:border-purple-900 outline-none w-full max-w-[120px] transition-colors"
             />
           </div>
           <button
@@ -137,58 +154,27 @@ export function EthPriceWidget({ className }: EthPriceWidgetProps) {
           <p className="text-xs text-red-500 mt-1">{error}</p>
         )}
 
-        {/* Price Scenario Slider with ETH Logo Handle */}
-        <div className="pt-2">
-          <div className="relative h-2">
-            {/* Track background */}
-            <div className="absolute inset-0 rounded-full overflow-hidden">
-              <div
-                className="h-full transition-all duration-150"
-                style={{
-                  background: `linear-gradient(to right, #dc2626 0%, #dc2626 9%, #fbbf24 9%, #fbbf24 15%, #22c55e 15%, #22c55e 100%)`,
-                }}
-              />
-            </div>
-
-            {/* Slider input */}
+        {/* Price Scenario Input */}
+        <div className="pt-2 border-t border-gray-100">
+          <label className="block text-xs text-gray-500 mb-1.5">
+            Price Change Scenario
+          </label>
+          <div className="flex items-center gap-2">
             <input
-              type="range"
-              min={-100}
-              max={1000}
-              step={5}
-              value={priceChangeScenario}
+              type="text"
+              value={localScenario}
               onChange={handleScenarioChange}
-              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+              onBlur={handleScenarioBlur}
+              className={`text-xl font-semibold bg-transparent border-b border-gray-300 hover:border-gray-400 focus:border-purple-900 outline-none w-16 text-right transition-colors ${
+                priceChangeScenario >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}
             />
-
-            {/* ETH Logo Handle */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 pointer-events-none transition-all duration-150"
-              style={{ left: `calc(${percentage}% - 12px)` }}
-            >
-              <div className="w-6 h-6 bg-white rounded-full shadow-md border border-gray-200 flex items-center justify-center">
-                <Image
-                  src="/eth-logo.svg"
-                  alt="ETH"
-                  width={14}
-                  height={14}
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Slider Labels */}
-          <div className="flex justify-between text-xs text-gray-400 mt-2">
-            <span>-100%</span>
-            <span className={priceChangeScenario >= 0 ? 'text-green-600 font-medium' : 'text-red-600 font-medium'}>
-              {priceChangeScenario >= 0 ? '+' : ''}{priceChangeScenario}%
+            <span className={`text-xl font-semibold ${priceChangeScenario >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              %
             </span>
-            <span>+1000%</span>
-          </div>
-
-          {/* Projected Price */}
-          <div className="text-sm text-gray-500 mt-2">
-            → {formatPrice(projectedPrice)}
+            <span className="text-sm text-gray-500 ml-2">
+              → {formatPrice(projectedPrice)}
+            </span>
           </div>
         </div>
       </div>

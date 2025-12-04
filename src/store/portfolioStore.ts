@@ -59,6 +59,9 @@ interface PortfolioStore {
   toggleStablecoinAllocation: (productId: string) => void
   updateStablecoinAllocationWeight: (productId: string, weight: number) => void
   setLeveragedStablecoinAllocations: (allocations: LeveragedStablecoinAllocation[]) => void
+
+  // Reset
+  reset: () => void
 }
 
 export const usePortfolioStore = create<PortfolioStore>()(
@@ -70,7 +73,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
 
       // Initial state - ETH Price
       ethPrice: 3500,
-      priceChangeScenario: 20,
+      priceChangeScenario: 5,
 
       // Initial state - Allocations
       ethAllocations: initialEthAllocations,
@@ -152,6 +155,18 @@ export const usePortfolioStore = create<PortfolioStore>()(
 
       setLeveragedStablecoinAllocations: (allocations) =>
         set({ leveragedStablecoinAllocations: allocations }),
+
+      // Reset to default values
+      reset: () =>
+        set({
+          investmentAmount: 1000000,
+          ethRatio: 40,
+          ethPrice: 3500,
+          priceChangeScenario: 5,
+          ethAllocations: initialEthAllocations,
+          stablecoinAllocations: initialStablecoinAllocations,
+          leveragedStablecoinAllocations: [],
+        }),
     }),
     {
       name: 'portfolio-storage',
