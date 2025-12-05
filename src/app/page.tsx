@@ -1,63 +1,39 @@
 import { HydrationGuard } from '@/components/HydrationGuard'
-import { Header } from '@/components/Header'
-import { PortfolioSetupWidget } from '@/components/widgets/PortfolioSetupWidget'
-import { EthPriceWidget } from '@/components/widgets/EthPriceWidget'
-import { EthAllocationWidget } from '@/components/widgets/EthAllocationWidget'
-import { StablecoinAllocationWidget } from '@/components/widgets/StablecoinAllocationWidget'
-import { ApyWidget } from '@/components/widgets/ApyWidget'
-import { EthHedgeWidget } from '@/components/widgets/EthHedgeWidget'
-import { LeverageRiskMetricsWidget } from '@/components/widgets/LeverageRiskMetricsWidget'
-import { AnnualReturnWidget } from '@/components/widgets/AnnualReturnWidget'
-import { ExpectedBalanceWidget } from '@/components/widgets/ExpectedBalanceWidget'
+import { AppLayout } from '@/components/layout/AppLayout'
+import { PortfolioAllocationWidget } from '@/components/widgets/PortfolioAllocationWidget'
+import { EthPriceCompactWidget } from '@/components/widgets/EthPriceCompactWidget'
+
+// Global Controls: Portfolio Allocation expands, ETH Price fits content with gap between
+function GlobalControls() {
+  return (
+    <div className="flex gap-4">
+      <div className="flex-1">
+        <PortfolioAllocationWidget />
+      </div>
+      <EthPriceCompactWidget />
+    </div>
+  )
+}
+
+// Placeholder components for tab content
+function TabPlaceholder({ name }: { name: string }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 p-8 min-h-[400px] flex items-center justify-center text-gray-400">
+      {name}
+    </div>
+  )
+}
 
 export default function Home() {
   return (
     <HydrationGuard>
-      <div className="min-h-screen bg-[#FAFAFA]">
-        <Header />
-
-        {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
-          {/* Widget Grid - responsive layout */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5 items-stretch">
-            {/* Row 1: Portfolio Setup + APY */}
-            <div className="md:col-span-2 lg:col-span-3">
-              <PortfolioSetupWidget />
-            </div>
-            <div className="md:col-span-2 lg:col-span-1">
-              <ApyWidget />
-            </div>
-
-            {/* Row 2: ETH Price + ETH Allocation + Total Return */}
-            <div className="md:col-span-1 lg:col-span-1">
-              <EthPriceWidget className="h-full" />
-            </div>
-            <div className="md:col-span-1 lg:col-span-2">
-              <EthAllocationWidget />
-            </div>
-            <div className="md:col-span-2 lg:col-span-1">
-              <AnnualReturnWidget />
-            </div>
-
-            {/* Row 3: Risk Metrics + ETH Hedge stacked | Stablecoin Allocation | Expected Balance */}
-            <div className="md:col-span-1 lg:col-span-1 flex flex-col gap-4 sm:gap-5">
-              <LeverageRiskMetricsWidget />
-              <EthHedgeWidget />
-            </div>
-            <div className="md:col-span-2 lg:col-span-2">
-              <StablecoinAllocationWidget />
-            </div>
-            <div className="md:col-span-1 lg:col-span-1">
-              <ExpectedBalanceWidget />
-            </div>
-          </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="py-6 text-center text-xs text-gray-400">
-          For simulation purposes only. Not financial advice.
-        </footer>
-      </div>
+      <AppLayout
+        globalControls={<GlobalControls />}
+        ethContent={<TabPlaceholder name="Content Area" />}
+        stablecoinContent={<TabPlaceholder name="Content Area" />}
+        hedgeContent={<TabPlaceholder name="Content Area" />}
+        resultsContent={<TabPlaceholder name="Content Area" />}
+      />
     </HydrationGuard>
   )
 }

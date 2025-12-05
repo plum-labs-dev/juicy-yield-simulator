@@ -1,24 +1,43 @@
 'use client'
 
-import { usePortfolioStore } from '@/store/portfolioStore'
+import { useState } from 'react'
 
 export function Header() {
-  const reset = usePortfolioStore((state) => state.reset)
+  const [lang, setLang] = useState<'en' | 'kr'>('en')
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
+      <div className="px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-xl font-bold text-[#48104a]">PlumLabs</span>
           <span className="text-gray-300">|</span>
-          <span className="text-lg font-medium text-gray-600">DeFi Yield Simulator</span>
+          <span className="text-base font-medium text-gray-500">DeFi Yield Simulator</span>
         </div>
-        <button
-          onClick={reset}
-          className="px-4 py-2 text-sm font-medium text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors"
-        >
-          Reset
-        </button>
+
+        {/* Language Toggle */}
+        <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setLang('en')}
+            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+              lang === 'en'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-500 hover:bg-gray-50'
+            }`}
+          >
+            EN
+          </button>
+          <div className="w-px h-5 bg-gray-200" />
+          <button
+            onClick={() => setLang('kr')}
+            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+              lang === 'kr'
+                ? 'bg-gray-100 text-gray-900'
+                : 'text-gray-500 hover:bg-gray-50'
+            }`}
+          >
+            KR
+          </button>
+        </div>
       </div>
     </header>
   )

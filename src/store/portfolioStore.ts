@@ -94,7 +94,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
       // Initial state - Hedge
       hedgeConfig: {
         enabled: false,
-        allocationPercent: 10,
+        allocationPercent: 0,
         leverage: 5,
       },
 
@@ -226,7 +226,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
           priceChangeScenario: 5,
           hedgeConfig: {
             enabled: false,
-            allocationPercent: 10,
+            allocationPercent: 0,
             leverage: 5,
           },
           ethAllocations: initialEthAllocations,
