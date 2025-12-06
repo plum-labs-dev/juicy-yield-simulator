@@ -16,7 +16,7 @@ export function HydrationGuard({ children }: HydrationGuardProps) {
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold text-[#48104a]">PlumLabs</span>
+            <span className="text-xl font-bold text-[#48104a]">Prism DeFi Labs</span>
             <span className="text-gray-300">|</span>
             <span className="text-lg font-medium text-gray-600">DeFi Yield Simulator</span>
           </div>
