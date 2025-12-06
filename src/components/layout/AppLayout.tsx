@@ -53,11 +53,6 @@ export function AppLayout({
         {/* Content Area */}
         <main className="flex-1 p-8">
           {renderContent()}
-
-          {/* Footer */}
-          <footer className="mt-8 text-center text-sm text-gray-400">
-            For simulation purposes only. Not financial advice.
-          </footer>
         </main>
       </div>
     </div>
