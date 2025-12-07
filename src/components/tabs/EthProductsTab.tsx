@@ -60,9 +60,9 @@ export function EthProductsTab() {
   }
 
   return (
-    <div>
+    <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
       {/* Header */}
-      <div className="pb-4">
+      <div className="pb-6">
         <div className="flex items-start justify-between">
           <div>
             <h2 className="text-xl font-semibold text-gray-900">ETH Products</h2>
@@ -93,7 +93,7 @@ export function EthProductsTab() {
 
       {/* Product List */}
       <div>
-        <div className="space-y-3">
+        <div className="space-y-4">
           {ethProducts.map((product) => {
             const allocation = ethAllocations.find((a) => a.productId === product.id)
             const weight = allocation?.weight ?? 0
@@ -109,10 +109,10 @@ export function EthProductsTab() {
             return (
               <div
                 key={product.id}
-                className={`flex items-center gap-4 px-4 rounded-2xl border transition-colors h-[92px] ${
+                className={`flex items-center gap-4 px-4 rounded-2xl transition-colors h-[92px] ${
                   isSelected
-                    ? 'border-gray-200 bg-white border-l-4 border-l-[#48104a]'
-                    : 'border-gray-200 bg-white opacity-60'
+                    ? 'bg-[#F5F5F5] border-l-4 border-l-[#48104a]'
+                    : 'bg-[#F5F5F5] opacity-60'
                 }`}
               >
 
