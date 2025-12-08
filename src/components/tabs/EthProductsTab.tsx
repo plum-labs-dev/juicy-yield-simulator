@@ -15,6 +15,7 @@ export function EthProductsTab() {
     toggleEthAllocation,
     updateEthAllocationWeight,
     setLeverageConfig,
+    setEthAllocations,
     ethAmount,
     ethPrice,
   } = usePortfolioStore()
@@ -59,6 +60,19 @@ export function EthProductsTab() {
     updateEthAllocationWeight(productId, clampedValue)
   }
 
+  const handleReset = () => {
+    setEthAllocations(
+      ethAllocations.map((a) => ({
+        ...a,
+        selected: false,
+        weight: 0,
+        leverage: undefined,
+      }))
+    )
+  }
+
+  const hasSelectedItems = ethAllocations.some((a) => a.selected)
+
   return (
     <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-8">
       {/* Header */}
@@ -68,8 +82,18 @@ export function EthProductsTab() {
             <h2 className="text-xl font-semibold text-gray-900">ETH Products</h2>
             <p className="text-sm text-gray-500 mt-1">Select products and allocate weights</p>
           </div>
-          <div className="bg-[#48104a] text-white px-4 py-2 rounded-full text-sm font-medium">
-            Total: {formatUsd(totalEthUsd)}
+          <div className="flex items-center gap-3">
+            {hasSelectedItems && (
+              <button
+                onClick={handleReset}
+                className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+              >
+                Reset
+              </button>
+            )}
+            <div className="bg-[#48104a] text-white px-4 py-2 rounded-full text-sm font-medium">
+              Total: {formatUsd(totalEthUsd)}
+            </div>
           </div>
         </div>
 

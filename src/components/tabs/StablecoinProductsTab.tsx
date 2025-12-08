@@ -10,6 +10,7 @@ export function StablecoinProductsTab() {
     stablecoinAllocations,
     toggleStablecoinAllocation,
     updateStablecoinAllocationWeight,
+    setStablecoinAllocations,
     stablecoinAmount,
     totalBorrowedAmount,
     ethAllocations,
@@ -34,6 +35,9 @@ export function StablecoinProductsTab() {
   // Calculate total stablecoin amount
   const totalStablecoinUsd = stablecoinAmount()
   const borrowedTotal = totalBorrowedAmount()
+
+  // Actual allocated base exposure (based on selected weights)
+  const allocatedBaseExposure = totalStablecoinUsd * (totalWeight / 100)
 
   const handleWeightChange = (productId: string, value: string) => {
     const numValue = parseInt(value) || 0
@@ -88,6 +92,18 @@ export function StablecoinProductsTab() {
   const leveragedDeployments = getLeveragedDeployments()
   const hasLeveragedFunds = borrowedTotal > 0
 
+  const handleReset = () => {
+    setStablecoinAllocations(
+      stablecoinAllocations.map((a) => ({
+        ...a,
+        selected: false,
+        weight: 0,
+      }))
+    )
+  }
+
+  const hasSelectedItems = stablecoinAllocations.some((a) => a.selected)
+
   return (
     <div className="space-y-4">
       {/* Card 1: Base Allocation */}
@@ -99,8 +115,18 @@ export function StablecoinProductsTab() {
               <h2 className="text-xl font-semibold text-gray-900">Stablecoin Products</h2>
               <p className="text-sm text-gray-500 mt-1">Select products and allocate weights</p>
             </div>
-            <div className="bg-[#48104a] text-white px-4 py-2 rounded-full text-sm font-medium">
-              Total: {formatUsd(totalStablecoinUsd)}
+            <div className="flex items-center gap-3">
+              {hasSelectedItems && (
+                <button
+                  onClick={handleReset}
+                  className="text-sm text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  Reset
+                </button>
+              )}
+              <div className="bg-[#48104a] text-white px-4 py-2 rounded-full text-sm font-medium">
+                Total: {formatUsd(totalStablecoinUsd)}
+              </div>
             </div>
           </div>
 
@@ -247,13 +273,13 @@ export function StablecoinProductsTab() {
       <div className="bg-white rounded-2xl shadow-[0_1px_2px_rgba(0,0,0,0.05)] p-6">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm text-gray-500">Total Stablecoin Exposure</div>
-            <div className="text-2xl font-bold text-gray-900">{formatUsd(totalStablecoinUsd + borrowedTotal)}</div>
+            <div className="text-sm text-gray-500">Allocated Stablecoin Exposure</div>
+            <div className="text-2xl font-bold text-gray-900">{formatUsd(allocatedBaseExposure + borrowedTotal)}</div>
           </div>
           <div className="text-right text-sm">
-            <div className="text-gray-500">{formatUsd(totalStablecoinUsd)}<span className="text-gray-400">base</span></div>
+            <div className="text-gray-500">{formatUsd(allocatedBaseExposure)} <span className="text-gray-400">base</span></div>
             {borrowedTotal > 0 && (
-              <div className="text-[#48104a]">{formatUsd(borrowedTotal)}<span className="text-gray-400">leveraged</span></div>
+              <div className="text-[#48104a]">{formatUsd(borrowedTotal)} <span className="text-gray-400">leveraged</span></div>
             )}
           </div>
         </div>
