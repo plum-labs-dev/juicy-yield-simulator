@@ -5,6 +5,7 @@ import { EthPriceCompactWidget } from '@/components/widgets/EthPriceCompactWidge
 import { EthProductsTab } from '@/components/tabs/EthProductsTab'
 import { StablecoinProductsTab } from '@/components/tabs/StablecoinProductsTab'
 import { HedgeTab } from '@/components/tabs/HedgeTab'
+import { ResultsTab } from '@/components/tabs/ResultsTab'
 
 // Global Controls: Portfolio Allocation expands, ETH Price fits content with gap between
 function GlobalControls() {
@@ -20,15 +21,6 @@ function GlobalControls() {
   )
 }
 
-// Placeholder components for tab content
-function TabPlaceholder({ name }: { name: string }) {
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-8 min-h-[400px] flex items-center justify-center text-gray-400">
-      {name}
-    </div>
-  )
-}
-
 export default function Home() {
   return (
     <HydrationGuard>
@@ -37,7 +29,7 @@ export default function Home() {
         ethContent={<EthProductsTab />}
         stablecoinContent={<StablecoinProductsTab />}
         hedgeContent={<HedgeTab />}
-        resultsContent={<TabPlaceholder name="Content Area" />}
+        resultsContent={<ResultsTab />}
       />
     </HydrationGuard>
   )
