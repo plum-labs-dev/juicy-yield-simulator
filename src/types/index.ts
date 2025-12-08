@@ -88,6 +88,7 @@ export interface BorrowOption {
 export interface HedgeConfig {
   enabled: boolean
   allocationPercent: number // % of total investment allocated to hedge
+  fundAllocation: number // % of hedge funds to deploy as margin (0-100)
   leverage: number // 1-25x
 }
 

@@ -95,6 +95,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
       hedgeConfig: {
         enabled: false,
         allocationPercent: 0,
+        fundAllocation: 80,
         leverage: 5,
       },
 
@@ -227,6 +228,7 @@ export const usePortfolioStore = create<PortfolioStore>()(
           hedgeConfig: {
             enabled: false,
             allocationPercent: 0,
+            fundAllocation: 80,
             leverage: 5,
           },
           ethAllocations: initialEthAllocations,

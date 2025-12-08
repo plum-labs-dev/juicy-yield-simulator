@@ -4,6 +4,7 @@ import { PortfolioAllocationWidget } from '@/components/widgets/PortfolioAllocat
 import { EthPriceCompactWidget } from '@/components/widgets/EthPriceCompactWidget'
 import { EthProductsTab } from '@/components/tabs/EthProductsTab'
 import { StablecoinProductsTab } from '@/components/tabs/StablecoinProductsTab'
+import { HedgeTab } from '@/components/tabs/HedgeTab'
 
 // Global Controls: Portfolio Allocation expands, ETH Price fits content with gap between
 function GlobalControls() {
@@ -35,7 +36,7 @@ export default function Home() {
         globalControls={<GlobalControls />}
         ethContent={<EthProductsTab />}
         stablecoinContent={<StablecoinProductsTab />}
-        hedgeContent={<TabPlaceholder name="Content Area" />}
+        hedgeContent={<HedgeTab />}
         resultsContent={<TabPlaceholder name="Content Area" />}
       />
     </HydrationGuard>
